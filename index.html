@@ -1,44 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sunglasses Home Trial</title>
+<title>Sunglasses Store</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
  margin:0;
  font-family: 'Segoe UI';
- background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
- url('https://images.unsplash.com/photo-1511499767150-a48a237f0083') no-repeat center/cover;
+ background:#111;
  color:white;
 }
 
+/* HEADER */
 header {
- text-align:center;
+ background:black;
  padding:15px;
- font-size:24px;
- font-weight:bold;
+ text-align:center;
+ font-size:22px;
 }
 
-.container {
+/* LAYOUT */
+.main {
+ display:flex;
+}
+
+/* LEFT PANEL */
+.sidebar {
+ width:25%;
+ background:#1c1c1c;
+ padding:15px;
+ height:100vh;
+}
+
+.sidebar input {
+ width:90%;
+ padding:10px;
+ margin:5px;
+}
+
+.sidebar button {
+ padding:10px;
+ width:100%;
+ background:#ff6600;
+ color:white;
+ border:none;
+}
+
+/* RIGHT PRODUCTS */
+.content {
+ width:75%;
  padding:20px;
- text-align:center;
+}
+
+/* SEARCH */
+.search {
+ width:100%;
+ padding:10px;
+ margin-bottom:15px;
 }
 
 /* PRODUCT GRID */
 .products {
- display:flex;
- flex-wrap:wrap;
- justify-content:center;
+ display:grid;
+ grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+ gap:15px;
 }
 
 .product {
  background:white;
  color:black;
- width:220px;
- margin:10px;
  padding:10px;
  border-radius:10px;
+ text-align:center;
 }
 
 .product img {
@@ -47,137 +81,73 @@ header {
 }
 
 button {
- padding:8px 15px;
- margin-top:8px;
+ margin-top:5px;
+ padding:8px;
  background:#ff6600;
  color:white;
  border:none;
- border-radius:5px;
  cursor:pointer;
-}
-
-.card {
- background:white;
- color:black;
- padding:20px;
- border-radius:10px;
- width:300px;
- margin:20px auto;
-}
-
-input {
- width:90%;
- padding:10px;
- margin:5px;
 }
 
 .hidden { display:none; }
 
-table {
- width:90%;
- margin:auto;
- background:white;
- color:black;
- border-collapse: collapse;
-}
-
-th, td {
- border:1px solid #ddd;
- padding:10px;
-}
 </style>
 </head>
 
 <body>
 
-<header>👓 Sunglasses Store - Home Trial</header>
+<header>👓 Sunglasses Home Trial</header>
 
-<div class="container">
+<div class="main">
 
-<!-- PRODUCT SECTION -->
-<h2>Choose Your Sunglasses</h2>
+<!-- LEFT SIDE (FORM) -->
+<div class="sidebar">
 
-<div class="products">
-
-<div class="product">
-<img src="https://via.placeholder.com/200">
-<h4>Black Stylish</h4>
-<button onclick="selectProduct('Black Stylish')">Select Trial</button>
-</div>
-
-<div class="product">
-<img src="https://via.placeholder.com/200">
-<h4>Classic Brown</h4>
-<button onclick="selectProduct('Classic Brown')">Select Trial</button>
-</div>
-
-<div class="product">
-<img src="https://via.placeholder.com/200">
-<h4>Blue Modern</h4>
-<button onclick="selectProduct('Blue Modern')">Select Trial</button>
-</div>
-
-</div>
-
-<!-- FORM -->
-<div class="card">
 <h3>Book Trial</h3>
+
 <input id="name" placeholder="Name">
-<input id="phone" placeholder="Mobile Number">
+<input id="phone" placeholder="Mobile">
 <input id="product" placeholder="Selected Product" readonly>
+
 <button onclick="saveData()">Submit</button>
-</div>
 
-<br>
+<br><br>
 <button onclick="showUserLogin()">User Login</button>
-<button onclick="showAdminRegister()">Admin Register</button>
-<button onclick="showAdminLogin()">Admin Login</button>
+<button onclick="showAdminLogin()">Admin</button>
 
-<!-- USER LOGIN -->
-<div id="userLogin" class="card hidden">
-<h3>User Login</h3>
-<input id="loginPhone" placeholder="Mobile Number">
-<button onclick="userLogin()">Login</button>
 </div>
 
-<!-- USER PROFILE -->
-<div id="userProfile" class="card hidden">
-<h3>Your Profile</h3>
-<p id="profileData"></p>
-<button onclick="logout()">Logout</button>
+<!-- RIGHT SIDE (PRODUCTS) -->
+<div class="content">
+
+<input class="search" placeholder="🔍 Search Sunglasses..." onkeyup="searchProduct(this.value)">
+
+<div class="products" id="productList">
+
+<!-- PRODUCTS -->
+<script>
+let products = [
+ "Black Stylish","Classic Brown","Blue Modern",
+ "Sport Black","Premium Gold","Retro Round",
+ "Aviator Silver","Luxury Black","Cool Blue",
+ "Dark Green","Urban Style","Night Vision"
+];
+
+let html="";
+products.forEach(p=>{
+ html += `
+ <div class="product">
+ <img src="https://via.placeholder.com/200">
+ <h4>${p}</h4>
+ <button onclick="selectProduct('${p}')">Select</button>
+ </div>`;
+});
+
+document.write(html);
+</script>
+
 </div>
 
-<!-- ADMIN REGISTER -->
-<div id="adminRegister" class="card hidden">
-<h3>Admin Register</h3>
-<input id="ruser" placeholder="Username">
-<input id="rpass" type="password" placeholder="Password">
-<button onclick="registerAdmin()">Register</button>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div id="adminLogin" class="card hidden">
-<h3>Admin Login</h3>
-<input id="luser" placeholder="Username">
-<input id="lpass" type="password" placeholder="Password">
-<button onclick="adminLogin()">Login</button>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="hidden">
-<h2>📊 Trial Users</h2>
-
-<table>
-<tr>
-<th>Name</th>
-<th>Phone</th>
-<th>Product</th>
-</tr>
-<tbody id="data"></tbody>
-</table>
-
-<br>
-<button onclick="logout()">Logout</button>
 </div>
 
 </div>
@@ -185,8 +155,8 @@ th, td {
 <script>
 
 // SELECT PRODUCT
-function selectProduct(name){
- document.getElementById("product").value = name;
+function selectProduct(p){
+ document.getElementById("product").value = p;
 }
 
 // SAVE DATA
@@ -203,76 +173,44 @@ function saveData(){
  alert("Trial Booked!");
 }
 
-// USER LOGIN
-function userLogin(){
- let phone = document.getElementById("loginPhone").value;
- let data = JSON.parse(localStorage.getItem("trial")) || [];
+// SEARCH
+function searchProduct(val){
+ let items = document.querySelectorAll(".product");
 
- let user = data.find(d => d.phone === phone);
-
- if(user){
-  hideAll();
-  document.getElementById("userProfile").classList.remove("hidden");
-
-  document.getElementById("profileData").innerHTML =
-   "Name: " + user.name + "<br>Product: " + user.product;
- } else {
-  alert("No record found!");
- }
+ items.forEach(item=>{
+  if(item.innerText.toLowerCase().includes(val.toLowerCase())){
+   item.style.display="block";
+  } else {
+   item.style.display="none";
+  }
+ });
 }
 
-// ADMIN REGISTER
-function registerAdmin(){
- localStorage.setItem("adminUser", document.getElementById("ruser").value);
- localStorage.setItem("adminPass", document.getElementById("rpass").value);
- alert("Admin Registered!");
- showAdminLogin();
+// USER LOGIN
+function showUserLogin(){
+ let phone = prompt("Enter Mobile Number");
+ let data = JSON.parse(localStorage.getItem("trial")) || [];
+
+ let user = data.find(d=>d.phone===phone);
+
+ if(user){
+  alert("Name: "+user.name+"\nProduct: "+user.product);
+ } else {
+  alert("No record found");
+ }
 }
 
 // ADMIN LOGIN
-function adminLogin(){
- let u = localStorage.getItem("adminUser");
- let p = localStorage.getItem("adminPass");
+function showAdminLogin(){
+ let pass = prompt("Enter Admin Password (1234)");
 
- if(document.getElementById("luser").value === u &&
-    document.getElementById("lpass").value === p){
-   showAdminPanel();
+ if(pass==="1234"){
+  let data = JSON.parse(localStorage.getItem("trial")) || [];
+  console.log(data);
+  alert("Check console for data");
  } else {
-   alert("Wrong Login");
+  alert("Wrong password");
  }
-}
-
-// ADMIN PANEL
-function showAdminPanel(){
- hideAll();
- document.getElementById("adminPanel").classList.remove("hidden");
-
- let data = JSON.parse(localStorage.getItem("trial")) || "";
- let html="";
-
- data.forEach(d=>{
-  html += `<tr>
-   <td>${d.name}</td>
-   <td>${d.phone}</td>
-   <td>${d.product}</td>
-  </tr>`;
- });
-
- document.getElementById("data").innerHTML = html;
-}
-
-// NAVIGATION
-function showUserLogin(){ hideAll(); document.getElementById("userLogin").classList.remove("hidden"); }
-function showAdminRegister(){ hideAll(); document.getElementById("adminRegister").classList.remove("hidden"); }
-function showAdminLogin(){ hideAll(); document.getElementById("adminLogin").classList.remove("hidden"); }
-function logout(){ hideAll(); }
-
-function hideAll(){
- document.getElementById("userLogin").classList.add("hidden");
- document.getElementById("userProfile").classList.add("hidden");
- document.getElementById("adminRegister").classList.add("hidden");
- document.getElementById("adminLogin").classList.add("hidden");
- document.getElementById("adminPanel").classList.add("hidden");
 }
 
 </script>
