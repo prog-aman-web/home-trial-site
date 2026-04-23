@@ -1,18 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home Trial System</title>
+<title>Sunglasses Home Trial</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family: Arial; margin:0; background:#f5f5f5; }
-header { background:black; color:white; padding:15px; text-align:center; }
-.container { padding:20px; text-align:center; }
+body {
+ font-family: Arial;
+ margin:0;
+ background: linear-gradient(120deg,#1e3c72,#2a5298);
+ color:white;
+}
+
+header {
+ text-align:center;
+ padding:20px;
+ font-size:24px;
+ font-weight:bold;
+}
+
+.container {
+ text-align:center;
+ padding:20px;
+}
+
+.card {
+ background:white;
+ color:black;
+ padding:20px;
+ border-radius:10px;
+ margin:10px auto;
+ width:300px;
+ box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
 
 input {
+ width:90%;
  padding:10px;
  margin:5px;
- width:250px;
 }
 
 button {
@@ -21,13 +46,17 @@ button {
  color:white;
  border:none;
  cursor:pointer;
+ border-radius:5px;
 }
 
+.hidden { display:none; }
+
 table {
+ width:95%;
  margin:auto;
- margin-top:20px;
  border-collapse: collapse;
- width:90%;
+ background:white;
+ color:black;
 }
 
 th, td {
@@ -35,45 +64,60 @@ th, td {
  padding:10px;
 }
 
-.hidden { display:none; }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>👓 Sunglasses Home Trial</h1>
-</header>
+<header>👓 Sunglasses Home Trial System</header>
 
 <div class="container">
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div id="home">
-<h2>Enquiry Form</h2>
+<div class="card">
+<h3>Book Home Trial</h3>
 
-<input id="name" placeholder="Name"><br>
-<input id="phone" placeholder="Phone"><br>
-<input id="product" placeholder="Product"><br>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="product" placeholder="Sunglass Type">
 
 <button onclick="saveData()">Submit</button>
+</div>
 
-<br><br>
+<br>
+<button onclick="showRegister()">Admin Register</button>
 <button onclick="showLogin()">Admin Login</button>
 </div>
 
-<!-- LOGIN PAGE -->
-<div id="login" class="hidden">
-<h2>Admin Login</h2>
+<!-- REGISTER -->
+<div id="register" class="hidden">
+<div class="card">
+<h3>Admin Registration</h3>
 
-<input id="user" placeholder="Username"><br>
-<input id="pass" type="password" placeholder="Password"><br>
+<input id="ruser" placeholder="Username">
+<input id="rpass" type="password" placeholder="Password">
+
+<button onclick="register()">Register</button>
+</div>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="hidden">
+<div class="card">
+<h3>Admin Login</h3>
+
+<input id="luser" placeholder="Username">
+<input id="lpass" type="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
 </div>
+</div>
 
-<!-- ADMIN PAGE -->
+<!-- ADMIN DASHBOARD -->
 <div id="admin" class="hidden">
-<h2>📊 Trial Users</h2>
+
+<h2>📊 Trial Users Data</h2>
 
 <table>
 <tr>
@@ -86,12 +130,14 @@ th, td {
 
 <br>
 <button onclick="logout()">Logout</button>
+
 </div>
 
 </div>
 
 <script>
 
+// SAVE USER ENQUIRY
 function saveData(){
  let data = JSON.parse(localStorage.getItem("trial")) || [];
 
@@ -102,35 +148,41 @@ function saveData(){
  });
 
  localStorage.setItem("trial", JSON.stringify(data));
-
- alert("Enquiry Saved!");
+ alert("Trial Request Submitted!");
 }
 
-// show login
-function showLogin(){
- document.getElementById("home").classList.add("hidden");
- document.getElementById("login").classList.remove("hidden");
+// ADMIN REGISTER
+function register(){
+ let user = document.getElementById("ruser").value;
+ let pass = document.getElementById("rpass").value;
+
+ localStorage.setItem("adminUser", user);
+ localStorage.setItem("adminPass", pass);
+
+ alert("Registered Successfully!");
+ showLogin();
 }
 
-// login
+// ADMIN LOGIN
 function login(){
- let u = document.getElementById("user").value;
- let p = document.getElementById("pass").value;
+ let user = document.getElementById("luser").value;
+ let pass = document.getElementById("lpass").value;
 
- if(u=="admin" && p=="1234"){
-   document.getElementById("login").classList.add("hidden");
-   document.getElementById("admin").classList.remove("hidden");
-   loadData();
+ let storedUser = localStorage.getItem("adminUser");
+ let storedPass = localStorage.getItem("adminPass");
+
+ if(user === storedUser && pass === storedPass){
+   showAdmin();
  } else {
-   alert("Wrong Login");
+   alert("Invalid Login!");
  }
 }
 
-// load data
+// LOAD DATA
 function loadData(){
  let data = JSON.parse(localStorage.getItem("trial")) || [];
 
- let html = "";
+ let html="";
  data.forEach(d=>{
   html += `<tr>
    <td>${d.name}</td>
@@ -142,10 +194,33 @@ function loadData(){
  document.getElementById("data").innerHTML = html;
 }
 
-// logout
+// NAVIGATION FUNCTIONS
+function showRegister(){
+ hideAll();
+ document.getElementById("register").classList.remove("hidden");
+}
+
+function showLogin(){
+ hideAll();
+ document.getElementById("login").classList.remove("hidden");
+}
+
+function showAdmin(){
+ hideAll();
+ document.getElementById("admin").classList.remove("hidden");
+ loadData();
+}
+
 function logout(){
- document.getElementById("admin").classList.add("hidden");
+ hideAll();
  document.getElementById("home").classList.remove("hidden");
+}
+
+function hideAll(){
+ document.getElementById("home").classList.add("hidden");
+ document.getElementById("register").classList.add("hidden");
+ document.getElementById("login").classList.add("hidden");
+ document.getElementById("admin").classList.add("hidden");
 }
 
 </script>
