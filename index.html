@@ -6,22 +6,23 @@
 
 <style>
 body {
- font-family: Arial;
  margin:0;
- background: linear-gradient(120deg,#1e3c72,#2a5298);
+ font-family: Arial;
+ background: url('https://images.unsplash.com/photo-1511499767150-a48a237f0083') no-repeat center center/cover;
  color:white;
+}
+
+.overlay {
+ background: rgba(0,0,0,0.7);
+ min-height:100vh;
+ padding:20px;
 }
 
 header {
  text-align:center;
- padding:20px;
- font-size:24px;
+ font-size:26px;
  font-weight:bold;
-}
-
-.container {
- text-align:center;
- padding:20px;
+ margin-bottom:20px;
 }
 
 .card {
@@ -29,9 +30,10 @@ header {
  color:black;
  padding:20px;
  border-radius:10px;
- margin:10px auto;
  width:300px;
- box-shadow:0 5px 15px rgba(0,0,0,0.2);
+ margin:10px auto;
+ box-shadow:0 5px 15px rgba(0,0,0,0.3);
+ text-align:center;
 }
 
 input {
@@ -45,8 +47,8 @@ button {
  background:#ff6600;
  color:white;
  border:none;
- cursor:pointer;
  border-radius:5px;
+ cursor:pointer;
 }
 
 .hidden { display:none; }
@@ -54,70 +56,62 @@ button {
 table {
  width:95%;
  margin:auto;
- border-collapse: collapse;
  background:white;
  color:black;
+ border-collapse: collapse;
 }
 
 th, td {
  border:1px solid black;
  padding:10px;
 }
-
 </style>
 </head>
 
 <body>
 
-<header>👓 Sunglasses Home Trial System</header>
+<div class="overlay">
 
-<div class="container">
+<header>👓 Sunglasses Store - Home Trial</header>
 
 <!-- HOME -->
-<div id="home">
-<div class="card">
-<h3>Book Home Trial</h3>
-
+<div id="home" class="card">
+<h3>Book Trial</h3>
 <input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
+<input id="phone" placeholder="Mobile Number">
 <input id="product" placeholder="Sunglass Type">
-
 <button onclick="saveData()">Submit</button>
+
+<br><br>
+<button onclick="showUserLogin()">User Login</button>
+<button onclick="showAdminLogin()">Admin Login</button>
 </div>
 
-<br>
-<button onclick="showRegister()">Admin Register</button>
-<button onclick="showLogin()">Admin Login</button>
+<!-- USER LOGIN -->
+<div id="userLogin" class="card hidden">
+<h3>User Login (Mobile)</h3>
+<input id="loginPhone" placeholder="Enter Mobile Number">
+<button onclick="userLogin()">Login</button>
 </div>
 
-<!-- REGISTER -->
-<div id="register" class="hidden">
-<div class="card">
-<h3>Admin Registration</h3>
-
-<input id="ruser" placeholder="Username">
-<input id="rpass" type="password" placeholder="Password">
-
-<button onclick="register()">Register</button>
-</div>
+<!-- USER PROFILE -->
+<div id="userProfile" class="card hidden">
+<h3>Your Profile</h3>
+<p id="profileData"></p>
+<button onclick="logout()">Logout</button>
 </div>
 
-<!-- LOGIN -->
-<div id="login" class="hidden">
-<div class="card">
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="card hidden">
 <h3>Admin Login</h3>
-
-<input id="luser" placeholder="Username">
-<input id="lpass" type="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-</div>
+<input id="adminUser" placeholder="Username">
+<input id="adminPass" type="password" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
 </div>
 
 <!-- ADMIN DASHBOARD -->
 <div id="admin" class="hidden">
-
-<h2>📊 Trial Users Data</h2>
+<h2 style="text-align:center;">📊 All Trial Users</h2>
 
 <table>
 <tr>
@@ -129,60 +123,72 @@ th, td {
 </table>
 
 <br>
+<div style="text-align:center;">
 <button onclick="logout()">Logout</button>
-
+</div>
 </div>
 
 </div>
 
 <script>
 
-// SAVE USER ENQUIRY
+// SAVE DATA
 function saveData(){
  let data = JSON.parse(localStorage.getItem("trial")) || [];
 
- data.push({
+ let user = {
   name: document.getElementById("name").value,
   phone: document.getElementById("phone").value,
   product: document.getElementById("product").value
- });
+ };
 
+ data.push(user);
  localStorage.setItem("trial", JSON.stringify(data));
- alert("Trial Request Submitted!");
+
+ alert("Trial Booked!");
 }
 
-// ADMIN REGISTER
-function register(){
- let user = document.getElementById("ruser").value;
- let pass = document.getElementById("rpass").value;
+// USER LOGIN
+function userLogin(){
+ let phone = document.getElementById("loginPhone").value;
+ let data = JSON.parse(localStorage.getItem("trial")) || [];
 
- localStorage.setItem("adminUser", user);
- localStorage.setItem("adminPass", pass);
+ let user = data.find(d => d.phone === phone);
 
- alert("Registered Successfully!");
- showLogin();
-}
+ if(user){
+  document.getElementById("userLogin").classList.add("hidden");
+  document.getElementById("userProfile").classList.remove("hidden");
 
-// ADMIN LOGIN
-function login(){
- let user = document.getElementById("luser").value;
- let pass = document.getElementById("lpass").value;
-
- let storedUser = localStorage.getItem("adminUser");
- let storedPass = localStorage.getItem("adminPass");
-
- if(user === storedUser && pass === storedPass){
-   showAdmin();
+  document.getElementById("profileData").innerHTML =
+   "Name: " + user.name + "<br>Phone: " + user.phone + "<br>Product: " + user.product;
  } else {
-   alert("Invalid Login!");
+  alert("No Data Found!");
+ }
+}
+
+// ADMIN LOGIN (default)
+localStorage.setItem("adminUser","admin");
+localStorage.setItem("adminPass","1234");
+
+function adminLogin(){
+ let u = document.getElementById("adminUser").value;
+ let p = document.getElementById("adminPass").value;
+
+ if(u==="admin" && p==="1234"){
+  showAdmin();
+ } else {
+  alert("Wrong Login");
  }
 }
 
 // LOAD DATA
-function loadData(){
- let data = JSON.parse(localStorage.getItem("trial")) || [];
+function showAdmin(){
+ hideAll();
+ document.getElementById("admin").classList.remove("hidden");
 
+ let data = JSON.parse(localStorage.getItem("trial")) || [];
  let html="";
+
  data.forEach(d=>{
   html += `<tr>
    <td>${d.name}</td>
@@ -194,21 +200,15 @@ function loadData(){
  document.getElementById("data").innerHTML = html;
 }
 
-// NAVIGATION FUNCTIONS
-function showRegister(){
+// NAVIGATION
+function showUserLogin(){
  hideAll();
- document.getElementById("register").classList.remove("hidden");
+ document.getElementById("userLogin").classList.remove("hidden");
 }
 
-function showLogin(){
+function showAdminLogin(){
  hideAll();
- document.getElementById("login").classList.remove("hidden");
-}
-
-function showAdmin(){
- hideAll();
- document.getElementById("admin").classList.remove("hidden");
- loadData();
+ document.getElementById("adminLogin").classList.remove("hidden");
 }
 
 function logout(){
@@ -218,8 +218,9 @@ function logout(){
 
 function hideAll(){
  document.getElementById("home").classList.add("hidden");
- document.getElementById("register").classList.add("hidden");
- document.getElementById("login").classList.add("hidden");
+ document.getElementById("userLogin").classList.add("hidden");
+ document.getElementById("userProfile").classList.add("hidden");
+ document.getElementById("adminLogin").classList.add("hidden");
  document.getElementById("admin").classList.add("hidden");
 }
 
