@@ -1,48 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sunglasses Store</title>
+<title>Sunglasses Home Trial</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
  margin:0;
- font-family: 'Segoe UI';
- background:#0f172a;
+ font-family:'Segoe UI';
+ background:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),
+ url('https://images.unsplash.com/photo-1511499767150-a48a237f0083') no-repeat center/cover;
  color:white;
 }
 
-/* HEADER */
 header {
- background:#020617;
- padding:15px;
  text-align:center;
+ padding:15px;
  font-size:22px;
- letter-spacing:1px;
+ background:rgba(0,0,0,0.6);
 }
 
 /* LAYOUT */
-.main {
- display:flex;
-}
+.main { display:flex; }
 
-/* SIDEBAR */
+/* LEFT PANEL */
 .sidebar {
  width:260px;
- background:#020617;
  padding:20px;
+ background:rgba(0,0,0,0.8);
  height:100vh;
- border-right:1px solid #1e293b;
-}
-
-.sidebar h3 {
- margin-top:0;
 }
 
 .sidebar input {
  width:100%;
  padding:10px;
- margin-bottom:10px;
+ margin:8px 0;
  border:none;
  border-radius:5px;
 }
@@ -51,45 +43,40 @@ header {
  width:100%;
  padding:10px;
  margin-top:5px;
- background:#f97316;
+ background:#ff6600;
  border:none;
  color:white;
  border-radius:5px;
  cursor:pointer;
 }
 
-/* CONTENT */
+/* RIGHT */
 .content {
  flex:1;
  padding:20px;
 }
 
-/* SEARCH */
 .search {
  width:100%;
  padding:10px;
  border-radius:5px;
  border:none;
- margin-bottom:20px;
+ margin-bottom:15px;
 }
 
-/* GRID */
+/* PRODUCTS */
 .products {
  display:grid;
- grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+ grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
  gap:15px;
 }
 
 .product {
- background:#1e293b;
+ background:white;
+ color:black;
  padding:10px;
  border-radius:10px;
  text-align:center;
- transition:0.3s;
-}
-
-.product:hover {
- transform:scale(1.03);
 }
 
 .product img {
@@ -98,9 +85,9 @@ header {
 }
 
 .btn {
- margin:3px;
+ margin-top:5px;
  padding:7px;
- background:#f97316;
+ background:#ff6600;
  border:none;
  color:white;
  border-radius:5px;
@@ -119,7 +106,8 @@ header {
 }
 
 .modal-box {
- background:#1e293b;
+ background:white;
+ color:black;
  padding:20px;
  border-radius:10px;
  width:300px;
@@ -131,24 +119,25 @@ header {
 /* TABLE */
 table {
  width:100%;
- background:#1e293b;
+ background:white;
+ color:black;
  border-collapse: collapse;
 }
 
 th, td {
  padding:10px;
- border-bottom:1px solid #334155;
+ border-bottom:1px solid #ccc;
 }
 </style>
 </head>
 
 <body>
 
-<header>👓 Premium Sunglasses Store</header>
+<header>👓 Sunglasses Home Trial</header>
 
 <div class="main">
 
-<!-- SIDEBAR -->
+<!-- LEFT -->
 <div class="sidebar">
 
 <h3>Book Trial</h3>
@@ -156,34 +145,25 @@ th, td {
 <input id="phone" placeholder="Mobile">
 <input id="product" placeholder="Selected Product" readonly>
 
-<button onclick="saveTrial()">Book Trial</button>
+<button onclick="saveTrial()">Submit</button>
 
 <h3>Account</h3>
 <button onclick="openUser()">User Login</button>
-<button onclick="openAdmin()">Admin</button>
-
-<h3>Extras</h3>
-<button onclick="showCart()">Cart 🛒</button>
-<button onclick="showWishlist()">Wishlist ❤️</button>
+<button onclick="openAdminRegister()">Admin Register</button>
+<button onclick="openAdmin()">Admin Login</button>
 
 </div>
 
-<!-- CONTENT -->
+<!-- RIGHT -->
 <div class="content">
 
 <input class="search" placeholder="🔍 Search sunglasses..." onkeyup="search(this.value)">
 
 <div class="products" id="products"></div>
 
-<!-- CART -->
-<div id="cartPage" class="hidden"></div>
-
-<!-- WISHLIST -->
-<div id="wishPage" class="hidden"></div>
-
-<!-- ADMIN -->
+<!-- ADMIN DASHBOARD -->
 <div id="adminPage" class="hidden">
-<h2>Admin Dashboard</h2>
+<h2>📊 Trial Users</h2>
 <table>
 <tr><th>Name</th><th>Phone</th><th>Product</th></tr>
 <tbody id="data"></tbody>
@@ -194,7 +174,7 @@ th, td {
 
 </div>
 
-<!-- USER MODAL -->
+<!-- USER LOGIN -->
 <div id="userModal" class="modal hidden">
 <div class="modal-box">
 <h3>User Login</h3>
@@ -204,11 +184,23 @@ th, td {
 </div>
 </div>
 
-<!-- ADMIN MODAL -->
+<!-- ADMIN REGISTER -->
+<div id="adminRegisterModal" class="modal hidden">
+<div class="modal-box">
+<h3>Admin Register</h3>
+<input id="ruser" placeholder="Username"><br>
+<input id="rpass" type="password" placeholder="Password"><br><br>
+<button onclick="registerAdmin()">Register</button>
+<button onclick="closeModal()">Close</button>
+</div>
+</div>
+
+<!-- ADMIN LOGIN -->
 <div id="adminModal" class="modal hidden">
 <div class="modal-box">
 <h3>Admin Login</h3>
-<input id="adminPass" placeholder="Password"><br><br>
+<input id="luser" placeholder="Username"><br>
+<input id="lpass" type="password" placeholder="Password"><br><br>
 <button onclick="adminLogin()">Login</button>
 <button onclick="closeModal()">Close</button>
 </div>
@@ -218,10 +210,8 @@ th, td {
 
 /* PRODUCTS */
 let products = [
- {name:"Aviator Black", img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
- {name:"Classic Brown", img:"https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f"},
- {name:"Blue Modern", img:"https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb"},
- {name:"Luxury Gold", img:"https://images.unsplash.com/photo-1487412912498-0447578fcca8"},
+ "Black Stylish","Classic Brown","Blue Modern",
+ "Aviator Silver","Luxury Gold","Sport Black"
 ];
 
 function load(){
@@ -229,9 +219,9 @@ function load(){
  products.forEach(p=>{
   html+=`
   <div class="product">
-  <img src="${p.img}">
-  <h4>${p.name}</h4>
-  <button class="btn" onclick="selectProduct('${p.name}')">Select</button>
+   <img src="https://via.placeholder.com/200">
+   <h4>${p}</h4>
+   <button class="btn" onclick="selectProduct('${p}')">Select</button>
   </div>`;
  });
  document.getElementById("products").innerHTML=html;
@@ -255,23 +245,32 @@ function saveTrial(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  data.push({name:name.value,phone:phone.value,product:product.value});
  localStorage.setItem("trial",JSON.stringify(data));
- alert("Trial Booked");
+ alert("Trial Booked!");
 }
 
 /* USER LOGIN */
 function userLogin(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  let u=data.find(d=>d.phone===loginPhone.value);
- alert(u ? "Welcome "+u.name : "No data");
+ alert(u ? "Name: "+u.name+"\nProduct: "+u.product : "No record found");
 }
 
-/* ADMIN */
+/* ADMIN REGISTER */
+function registerAdmin(){
+ localStorage.setItem("adminUser",ruser.value);
+ localStorage.setItem("adminPass",rpass.value);
+ alert("Admin Registered!");
+}
+
+/* ADMIN LOGIN */
 function adminLogin(){
- if(adminPass.value==="1234"){
-  showAdmin();
- }
+ if(luser.value===localStorage.getItem("adminUser") &&
+    lpass.value===localStorage.getItem("adminPass")){
+   showAdmin();
+ } else alert("Wrong Login");
 }
 
+/* ADMIN DASHBOARD */
 function showAdmin(){
  adminPage.classList.remove("hidden");
  let data=JSON.parse(localStorage.getItem("trial"))||[];
@@ -285,14 +284,12 @@ function showAdmin(){
 /* MODAL */
 function openUser(){ userModal.classList.remove("hidden"); }
 function openAdmin(){ adminModal.classList.remove("hidden"); }
+function openAdminRegister(){ adminRegisterModal.classList.remove("hidden"); }
 function closeModal(){
  userModal.classList.add("hidden");
  adminModal.classList.add("hidden");
+ adminRegisterModal.classList.add("hidden");
 }
-
-/* CART/WISHLIST (basic) */
-function showCart(){ alert("Cart feature connect with backend later"); }
-function showWishlist(){ alert("Wishlist feature connect later"); }
 
 </script>
 
