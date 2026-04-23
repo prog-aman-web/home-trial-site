@@ -1,117 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sunglasses Home Trial</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      background: #f4f4f4;
-    }
-
-    header {
-      background: black;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .container {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      margin: 15px;
-      border-radius: 10px;
-      display: inline-block;
-      width: 280px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    img {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    .btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: orange;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .form-box {
-      display: none;
-      background: white;
-      padding: 20px;
-      margin: 20px auto;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px gray;
-    }
-
-    input {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
-    }
-
-  </style>
+<title>Home Trial</title>
 </head>
-
 <body>
 
-<header>
-  <h1>🕶️ Sunglasses Home Trial</h1>
-  <p>Try Stylish Sunglasses at Home</p>
-</header>
+<h1>🏠 Sunglasses Home Trial</h1>
 
-<div class="container">
+<h2>Enquiry Form</h2>
 
-  <!-- Product -->
-  <div class="card">
-    <img src="https://via.placeholder.com/250" alt="Sunglasses">
-    <h3>Stylish Black Sunglasses</h3>
-    <p>5 Days Free Home Trial</p>
-    <button class="btn" onclick="showForm()">Start Trial</button>
-  </div>
+<input id="name" placeholder="Name"><br><br>
+<input id="phone" placeholder="Phone"><br><br>
+<input id="product" placeholder="Product"><br><br>
 
-</div>
+<button onclick="saveData()">Submit</button>
 
-<!-- Form -->
-<div class="form-box" id="formBox">
-  <h3>Book Home Trial</h3>
-
-  <input type="text" placeholder="Your Name" id="name">
-  <input type="text" placeholder="Mobile Number" id="mobile">
-  <input type="text" placeholder="Address" id="address">
-
-  <button class="btn" onclick="submitForm()">Submit</button>
-</div>
+<br><br>
+<a href="login.html">Admin Login</a>
 
 <script>
-  function showForm() {
-    document.getElementById("formBox").style.display = "block";
-  }
+function saveData(){
+ let data = JSON.parse(localStorage.getItem("trial")) || [];
 
-  function submitForm() {
-    let name = document.getElementById("name").value;
+ data.push({
+  name: document.getElementById("name").value,
+  phone: document.getElementById("phone").value,
+  product: document.getElementById("product").value
+ });
 
-    if(name === "") {
-      alert("Please enter your name");
-      return;
-    }
+ localStorage.setItem("trial", JSON.stringify(data));
 
-    alert("✅ Trial Booked Successfully!\nThank you " + name);
-  }
+ alert("Enquiry Saved!");
+}
 </script>
 
 </body>
