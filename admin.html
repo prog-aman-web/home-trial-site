@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+</head>
+<body>
+
+<h1>📊 Trial Users Data</h1>
+
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Product</th>
+</tr>
+
+<tbody id="data"></tbody>
+
+</table>
+
+<script>
+let data = JSON.parse(localStorage.getItem("trial")) || [];
+
+let html = "";
+
+data.forEach(d=>{
+ html += `<tr>
+   <td>${d.name}</td>
+   <td>${d.phone}</td>
+   <td>${d.product}</td>
+ </tr>`;
+});
+
+document.getElementById("data").innerHTML = html;
+</script>
+
+</body>
+</html>
