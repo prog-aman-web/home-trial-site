@@ -1,24 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home Trial</title>
+<title>Home Trial System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { font-family: Arial; margin:0; background:#f5f5f5; }
+header { background:black; color:white; padding:15px; text-align:center; }
+.container { padding:20px; text-align:center; }
+
+input {
+ padding:10px;
+ margin:5px;
+ width:250px;
+}
+
+button {
+ padding:10px 20px;
+ background:#ff6600;
+ color:white;
+ border:none;
+ cursor:pointer;
+}
+
+table {
+ margin:auto;
+ margin-top:20px;
+ border-collapse: collapse;
+ width:90%;
+}
+
+th, td {
+ border:1px solid black;
+ padding:10px;
+}
+
+.hidden { display:none; }
+</style>
 </head>
+
 <body>
 
-<h1>🏠 Sunglasses Home Trial</h1>
+<header>
+<h1>👓 Sunglasses Home Trial</h1>
+</header>
 
+<div class="container">
+
+<!-- HOME PAGE -->
+<div id="home">
 <h2>Enquiry Form</h2>
 
-<input id="name" placeholder="Name"><br><br>
-<input id="phone" placeholder="Phone"><br><br>
-<input id="product" placeholder="Product"><br><br>
+<input id="name" placeholder="Name"><br>
+<input id="phone" placeholder="Phone"><br>
+<input id="product" placeholder="Product"><br>
 
 <button onclick="saveData()">Submit</button>
 
 <br><br>
-<a href="login.html">Admin Login</a>
+<button onclick="showLogin()">Admin Login</button>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="login" class="hidden">
+<h2>Admin Login</h2>
+
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password" placeholder="Password"><br>
+
+<button onclick="login()">Login</button>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="admin" class="hidden">
+<h2>📊 Trial Users</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Product</th>
+</tr>
+<tbody id="data"></tbody>
+</table>
+
+<br>
+<button onclick="logout()">Logout</button>
+</div>
+
+</div>
 
 <script>
+
 function saveData(){
  let data = JSON.parse(localStorage.getItem("trial")) || [];
 
@@ -32,6 +105,49 @@ function saveData(){
 
  alert("Enquiry Saved!");
 }
+
+// show login
+function showLogin(){
+ document.getElementById("home").classList.add("hidden");
+ document.getElementById("login").classList.remove("hidden");
+}
+
+// login
+function login(){
+ let u = document.getElementById("user").value;
+ let p = document.getElementById("pass").value;
+
+ if(u=="admin" && p=="1234"){
+   document.getElementById("login").classList.add("hidden");
+   document.getElementById("admin").classList.remove("hidden");
+   loadData();
+ } else {
+   alert("Wrong Login");
+ }
+}
+
+// load data
+function loadData(){
+ let data = JSON.parse(localStorage.getItem("trial")) || [];
+
+ let html = "";
+ data.forEach(d=>{
+  html += `<tr>
+   <td>${d.name}</td>
+   <td>${d.phone}</td>
+   <td>${d.product}</td>
+  </tr>`;
+ });
+
+ document.getElementById("data").innerHTML = html;
+}
+
+// logout
+function logout(){
+ document.getElementById("admin").classList.add("hidden");
+ document.getElementById("home").classList.remove("hidden");
+}
+
 </script>
 
 </body>
