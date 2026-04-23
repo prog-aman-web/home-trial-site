@@ -8,48 +8,59 @@
 body {
  margin:0;
  font-family: 'Segoe UI';
- background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
- url('https://images.unsplash.com/photo-1511499767150-a48a237f0083') no-repeat center/cover;
+ background:#0f172a;
  color:white;
 }
 
 /* HEADER */
 header {
- background:rgba(0,0,0,0.7);
+ background:#020617;
  padding:15px;
  text-align:center;
  font-size:22px;
+ letter-spacing:1px;
 }
 
 /* LAYOUT */
-.main { display:flex; }
+.main {
+ display:flex;
+}
 
 /* SIDEBAR */
 .sidebar {
- width:25%;
- background:rgba(0,0,0,0.8);
- padding:15px;
+ width:260px;
+ background:#020617;
+ padding:20px;
  height:100vh;
+ border-right:1px solid #1e293b;
+}
+
+.sidebar h3 {
+ margin-top:0;
 }
 
 .sidebar input {
- width:90%;
+ width:100%;
  padding:10px;
- margin:5px;
+ margin-bottom:10px;
+ border:none;
+ border-radius:5px;
 }
 
 .sidebar button {
  width:100%;
  padding:10px;
  margin-top:5px;
- background:#ff6600;
- color:white;
+ background:#f97316;
  border:none;
+ color:white;
+ border-radius:5px;
+ cursor:pointer;
 }
 
 /* CONTENT */
 .content {
- width:75%;
+ flex:1;
  padding:20px;
 }
 
@@ -57,22 +68,28 @@ header {
 .search {
  width:100%;
  padding:10px;
- margin-bottom:15px;
+ border-radius:5px;
+ border:none;
+ margin-bottom:20px;
 }
 
-/* PRODUCT GRID */
+/* GRID */
 .products {
  display:grid;
- grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+ grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
  gap:15px;
 }
 
 .product {
- background:white;
- color:black;
+ background:#1e293b;
  padding:10px;
  border-radius:10px;
  text-align:center;
+ transition:0.3s;
+}
+
+.product:hover {
+ transform:scale(1.03);
 }
 
 .product img {
@@ -82,10 +99,11 @@ header {
 
 .btn {
  margin:3px;
- padding:8px;
- background:#ff6600;
- color:white;
+ padding:7px;
+ background:#f97316;
  border:none;
+ color:white;
+ border-radius:5px;
  cursor:pointer;
 }
 
@@ -98,12 +116,10 @@ header {
  display:flex;
  justify-content:center;
  align-items:center;
- z-index:1000;
 }
 
-.modal-content {
- background:white;
- color:black;
+.modal-box {
+ background:#1e293b;
  padding:20px;
  border-radius:10px;
  width:300px;
@@ -114,67 +130,60 @@ header {
 
 /* TABLE */
 table {
- width:90%;
- margin:auto;
- background:white;
- color:black;
+ width:100%;
+ background:#1e293b;
  border-collapse: collapse;
 }
 
 th, td {
- border:1px solid #ddd;
  padding:10px;
+ border-bottom:1px solid #334155;
 }
 </style>
 </head>
 
 <body>
 
-<header>👓 Sunglasses E-Commerce Store</header>
+<header>👓 Premium Sunglasses Store</header>
 
 <div class="main">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-<h3>Trial Form</h3>
+<h3>Book Trial</h3>
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Mobile">
 <input id="product" placeholder="Selected Product" readonly>
 
 <button onclick="saveTrial()">Book Trial</button>
 
-<h3>Menu</h3>
-<button onclick="openUserLogin()">User Login</button>
-<button onclick="openAdminRegister()">Admin Register</button>
-<button onclick="openAdminLogin()">Admin Login</button>
-<button onclick="viewWishlist()">Wishlist ❤️</button>
-<button onclick="viewCart()">Cart 🛒</button>
+<h3>Account</h3>
+<button onclick="openUser()">User Login</button>
+<button onclick="openAdmin()">Admin</button>
+
+<h3>Extras</h3>
+<button onclick="showCart()">Cart 🛒</button>
+<button onclick="showWishlist()">Wishlist ❤️</button>
 
 </div>
 
 <!-- CONTENT -->
 <div class="content">
 
-<input class="search" placeholder="🔍 Search Sunglasses..." onkeyup="searchProduct(this.value)">
+<input class="search" placeholder="🔍 Search sunglasses..." onkeyup="search(this.value)">
 
 <div class="products" id="products"></div>
 
-<!-- WISHLIST -->
-<div id="wishlistPage" class="hidden">
-<h2>❤️ Wishlist</h2>
-<ul id="wishlist"></ul>
-</div>
-
 <!-- CART -->
-<div id="cartPage" class="hidden">
-<h2>🛒 Cart</h2>
-<ul id="cart"></ul>
-</div>
+<div id="cartPage" class="hidden"></div>
+
+<!-- WISHLIST -->
+<div id="wishPage" class="hidden"></div>
 
 <!-- ADMIN -->
 <div id="adminPage" class="hidden">
-<h2>📊 Admin Dashboard</h2>
+<h2>Admin Dashboard</h2>
 <table>
 <tr><th>Name</th><th>Phone</th><th>Product</th></tr>
 <tbody id="data"></tbody>
@@ -185,33 +194,21 @@ th, td {
 
 </div>
 
-<!-- USER LOGIN MODAL -->
+<!-- USER MODAL -->
 <div id="userModal" class="modal hidden">
-<div class="modal-content">
+<div class="modal-box">
 <h3>User Login</h3>
-<input id="loginPhone" placeholder="Mobile Number"><br>
+<input id="loginPhone" placeholder="Mobile"><br><br>
 <button onclick="userLogin()">Login</button>
 <button onclick="closeModal()">Close</button>
 </div>
 </div>
 
-<!-- ADMIN REGISTER -->
-<div id="adminRegisterModal" class="modal hidden">
-<div class="modal-content">
-<h3>Admin Register</h3>
-<input id="ruser" placeholder="Username"><br>
-<input id="rpass" type="password" placeholder="Password"><br>
-<button onclick="registerAdmin()">Register</button>
-<button onclick="closeModal()">Close</button>
-</div>
-</div>
-
-<!-- ADMIN LOGIN -->
+<!-- ADMIN MODAL -->
 <div id="adminModal" class="modal hidden">
-<div class="modal-content">
+<div class="modal-box">
 <h3>Admin Login</h3>
-<input id="luser" placeholder="Username"><br>
-<input id="lpass" type="password" placeholder="Password"><br>
+<input id="adminPass" placeholder="Password"><br><br>
 <button onclick="adminLogin()">Login</button>
 <button onclick="closeModal()">Close</button>
 </div>
@@ -221,110 +218,62 @@ th, td {
 
 /* PRODUCTS */
 let products = [
- "Black Stylish","Classic Brown","Blue Modern","Aviator Silver",
- "Luxury Gold","Sport Black","Retro Round","Urban Style"
+ {name:"Aviator Black", img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083"},
+ {name:"Classic Brown", img:"https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f"},
+ {name:"Blue Modern", img:"https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb"},
+ {name:"Luxury Gold", img:"https://images.unsplash.com/photo-1487412912498-0447578fcca8"},
 ];
 
-function loadProducts(){
+function load(){
  let html="";
  products.forEach(p=>{
   html+=`
   <div class="product">
-   <img src="https://via.placeholder.com/200">
-   <h4>${p}</h4>
-   <button class="btn" onclick="selectProduct('${p}')">Select</button>
-   <button class="btn" onclick="addWishlist('${p}')">❤️</button>
-   <button class="btn" onclick="addCart('${p}')">🛒</button>
+  <img src="${p.img}">
+  <h4>${p.name}</h4>
+  <button class="btn" onclick="selectProduct('${p.name}')">Select</button>
   </div>`;
  });
  document.getElementById("products").innerHTML=html;
 }
-loadProducts();
+load();
+
+/* SEARCH */
+function search(v){
+ document.querySelectorAll(".product").forEach(i=>{
+  i.style.display=i.innerText.toLowerCase().includes(v.toLowerCase())?"block":"none";
+ });
+}
 
 /* SELECT */
 function selectProduct(p){
  product.value=p;
 }
 
-/* SEARCH */
-function searchProduct(val){
- document.querySelectorAll(".product").forEach(i=>{
-  i.style.display=i.innerText.toLowerCase().includes(val.toLowerCase())?"block":"none";
- });
-}
-
-/* TRIAL */
+/* SAVE */
 function saveTrial(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  data.push({name:name.value,phone:phone.value,product:product.value});
  localStorage.setItem("trial",JSON.stringify(data));
- alert("Trial Booked!");
-}
-
-/* WISHLIST */
-function addWishlist(p){
- let w=JSON.parse(localStorage.getItem("wish"))||[];
- w.push(p);
- localStorage.setItem("wish",JSON.stringify(w));
- alert("Added to Wishlist");
-}
-function viewWishlist(){
- hideAll();
- let w=JSON.parse(localStorage.getItem("wish"))||[];
- wishlist.innerHTML=w.map(i=>"<li>"+i+"</li>").join("");
- wishlistPage.classList.remove("hidden");
-}
-
-/* CART */
-function addCart(p){
- let c=JSON.parse(localStorage.getItem("cart"))||[];
- c.push(p);
- localStorage.setItem("cart",JSON.stringify(c));
- alert("Added to Cart");
-}
-function viewCart(){
- hideAll();
- let c=JSON.parse(localStorage.getItem("cart"))||[];
- cart.innerHTML=c.map(i=>"<li>"+i+"</li>").join("");
- cartPage.classList.remove("hidden");
-}
-
-/* MODALS */
-function openUserLogin(){ userModal.classList.remove("hidden"); }
-function openAdminRegister(){ adminRegisterModal.classList.remove("hidden"); }
-function openAdminLogin(){ adminModal.classList.remove("hidden"); }
-function closeModal(){
- userModal.classList.add("hidden");
- adminModal.classList.add("hidden");
- adminRegisterModal.classList.add("hidden");
+ alert("Trial Booked");
 }
 
 /* USER LOGIN */
 function userLogin(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  let u=data.find(d=>d.phone===loginPhone.value);
- if(u) alert("Name: "+u.name+"\nProduct: "+u.product);
- else alert("No data found");
+ alert(u ? "Welcome "+u.name : "No data");
 }
 
 /* ADMIN */
-function registerAdmin(){
- localStorage.setItem("adminUser",ruser.value);
- localStorage.setItem("adminPass",rpass.value);
- alert("Admin Registered");
-}
-
 function adminLogin(){
- if(luser.value===localStorage.getItem("adminUser") &&
-    lpass.value===localStorage.getItem("adminPass")){
-   showAdmin();
- } else alert("Wrong Login");
+ if(adminPass.value==="1234"){
+  showAdmin();
+ }
 }
 
 function showAdmin(){
- hideAll();
  adminPage.classList.remove("hidden");
-
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  let html="";
  data.forEach(d=>{
@@ -333,12 +282,17 @@ function showAdmin(){
  document.getElementById("data").innerHTML=html;
 }
 
-/* NAV */
-function hideAll(){
- wishlistPage.classList.add("hidden");
- cartPage.classList.add("hidden");
- adminPage.classList.add("hidden");
+/* MODAL */
+function openUser(){ userModal.classList.remove("hidden"); }
+function openAdmin(){ adminModal.classList.remove("hidden"); }
+function closeModal(){
+ userModal.classList.add("hidden");
+ adminModal.classList.add("hidden");
 }
+
+/* CART/WISHLIST (basic) */
+function showCart(){ alert("Cart feature connect with backend later"); }
+function showWishlist(){ alert("Wishlist feature connect later"); }
 
 </script>
 
