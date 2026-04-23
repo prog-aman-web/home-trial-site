@@ -61,6 +61,7 @@ header {
  margin-bottom:15px;
 }
 
+/* PRODUCT GRID */
 .products {
  display:grid;
  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
@@ -73,11 +74,16 @@ header {
  padding:10px;
  border-radius:10px;
  text-align:center;
+ transition:0.3s;
+}
+
+.product:hover {
+ transform:scale(1.05);
 }
 
 .product img {
  width:100%;
- height:150px;
+ height:180px;
  object-fit:cover;
  border-radius:10px;
 }
@@ -158,7 +164,7 @@ th, td {
 
 <div class="products" id="products"></div>
 
-<!-- ADMIN DASHBOARD -->
+<!-- ADMIN -->
 <div id="adminPage" class="hidden">
 <h2>📊 Trial Users</h2>
 <table>
@@ -205,16 +211,17 @@ th, td {
 
 <script>
 
-/* ONLY SUNGLASSES IMAGES */
+/* ONLY SUNGLASSES / GOGGLES / POWER GLASSES */
 let products = [
  {name:"Black Aviator", img:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=400&q=80"},
- {name:"Brown Classic", img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=400&q=80"},
+ {name:"Classic Brown", img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=400&q=80"},
  {name:"Blue Reflective", img:"https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=400&q=80"},
  {name:"Golden Frame", img:"https://images.unsplash.com/photo-1487412912498-0447578fcca8?auto=format&fit=crop&w=400&q=80"},
  {name:"Sport Goggles", img:"https://images.unsplash.com/photo-1600180758890-6b94519a8ba3?auto=format&fit=crop&w=400&q=80"},
  {name:"Power Glass Frame", img:"https://images.unsplash.com/photo-1585386959984-a41552262a4c?auto=format&fit=crop&w=400&q=80"}
 ];
-/* LOAD */
+
+/* LOAD PRODUCTS */
 function load(){
  let html="";
  products.forEach(p=>{
@@ -229,15 +236,17 @@ function load(){
 }
 load();
 
-/* बाकी code same */
+/* SEARCH */
 function search(v){
  document.querySelectorAll(".product").forEach(i=>{
   i.style.display=i.innerText.toLowerCase().includes(v.toLowerCase())?"block":"none";
  });
 }
 
+/* SELECT */
 function selectProduct(p){ product.value=p; }
 
+/* SAVE */
 function saveTrial(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  data.push({name:name.value,phone:phone.value,product:product.value});
@@ -245,18 +254,21 @@ function saveTrial(){
  alert("Trial Booked!");
 }
 
+/* USER LOGIN */
 function userLogin(){
  let data=JSON.parse(localStorage.getItem("trial"))||[];
  let u=data.find(d=>d.phone===loginPhone.value);
  alert(u ? "Name: "+u.name+"\nProduct: "+u.product : "No record found");
 }
 
+/* ADMIN REGISTER */
 function registerAdmin(){
  localStorage.setItem("adminUser",ruser.value);
  localStorage.setItem("adminPass",rpass.value);
  alert("Admin Registered!");
 }
 
+/* ADMIN LOGIN */
 function adminLogin(){
  if(luser.value===localStorage.getItem("adminUser") &&
     lpass.value===localStorage.getItem("adminPass")){
@@ -264,6 +276,7 @@ function adminLogin(){
  } else alert("Wrong Login");
 }
 
+/* ADMIN DASHBOARD */
 function showAdmin(){
  adminPage.classList.remove("hidden");
  let data=JSON.parse(localStorage.getItem("trial"))||[];
@@ -274,6 +287,7 @@ function showAdmin(){
  document.getElementById("data").innerHTML=html;
 }
 
+/* MODAL */
 function openUser(){ userModal.classList.remove("hidden"); }
 function openAdmin(){ adminModal.classList.remove("hidden"); }
 function openAdminRegister(){ adminRegisterModal.classList.remove("hidden"); }
