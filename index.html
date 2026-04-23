@@ -7,43 +7,53 @@
 <style>
 body {
  margin:0;
- font-family: Arial;
- background: url('https://images.unsplash.com/photo-1511499767150-a48a237f0083') no-repeat center center/cover;
+ font-family: 'Segoe UI', sans-serif;
+ background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+ url('https://images.unsplash.com/photo-1508296695146-257a814070b4') no-repeat center/cover;
  color:white;
 }
 
-.overlay {
- background: rgba(0,0,0,0.7);
- min-height:100vh;
- padding:20px;
-}
-
+/* HEADER */
 header {
  text-align:center;
- font-size:26px;
+ padding:15px;
+ font-size:24px;
  font-weight:bold;
- margin-bottom:20px;
+ background: rgba(0,0,0,0.6);
 }
 
+/* CONTAINER */
+.container {
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ min-height:90vh;
+}
+
+/* CARD PANEL */
 .card {
  background:white;
  color:black;
- padding:20px;
- border-radius:10px;
- width:300px;
- margin:10px auto;
- box-shadow:0 5px 15px rgba(0,0,0,0.3);
+ padding:25px;
+ border-radius:12px;
+ width:320px;
+ box-shadow:0 10px 25px rgba(0,0,0,0.4);
  text-align:center;
 }
 
+/* INPUT */
 input {
  width:90%;
  padding:10px;
- margin:5px;
+ margin:8px;
+ border-radius:5px;
+ border:1px solid #ccc;
 }
 
+/* BUTTON */
 button {
  padding:10px 20px;
+ margin-top:10px;
  background:#ff6600;
  color:white;
  border:none;
@@ -51,32 +61,40 @@ button {
  cursor:pointer;
 }
 
+button:hover {
+ background:#e65c00;
+}
+
 .hidden { display:none; }
 
+/* TABLE */
 table {
- width:95%;
+ width:90%;
  margin:auto;
+ margin-top:20px;
+ border-collapse: collapse;
  background:white;
  color:black;
- border-collapse: collapse;
 }
 
 th, td {
- border:1px solid black;
+ border:1px solid #ddd;
  padding:10px;
+ text-align:center;
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-
 <header>👓 Sunglasses Store - Home Trial</header>
+
+<div class="container">
 
 <!-- HOME -->
 <div id="home" class="card">
-<h3>Book Trial</h3>
+<h3>Book Home Trial</h3>
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Mobile Number">
 <input id="product" placeholder="Sunglass Type">
@@ -84,12 +102,13 @@ th, td {
 
 <br><br>
 <button onclick="showUserLogin()">User Login</button>
+<button onclick="showAdminRegister()">Admin Register</button>
 <button onclick="showAdminLogin()">Admin Login</button>
 </div>
 
 <!-- USER LOGIN -->
 <div id="userLogin" class="card hidden">
-<h3>User Login (Mobile)</h3>
+<h3>User Login</h3>
 <input id="loginPhone" placeholder="Enter Mobile Number">
 <button onclick="userLogin()">Login</button>
 </div>
@@ -101,17 +120,25 @@ th, td {
 <button onclick="logout()">Logout</button>
 </div>
 
+<!-- ADMIN REGISTER -->
+<div id="adminRegister" class="card hidden">
+<h3>Admin Registration</h3>
+<input id="ruser" placeholder="Username">
+<input id="rpass" type="password" placeholder="Password">
+<button onclick="registerAdmin()">Register</button>
+</div>
+
 <!-- ADMIN LOGIN -->
 <div id="adminLogin" class="card hidden">
 <h3>Admin Login</h3>
-<input id="adminUser" placeholder="Username">
-<input id="adminPass" type="password" placeholder="Password">
+<input id="luser" placeholder="Username">
+<input id="lpass" type="password" placeholder="Password">
 <button onclick="adminLogin()">Login</button>
 </div>
 
-<!-- ADMIN DASHBOARD -->
-<div id="admin" class="hidden">
-<h2 style="text-align:center;">📊 All Trial Users</h2>
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden">
+<h2 style="text-align:center;">📊 Trial Users Data</h2>
 
 <table>
 <tr>
@@ -122,7 +149,6 @@ th, td {
 <tbody id="data"></tbody>
 </table>
 
-<br>
 <div style="text-align:center;">
 <button onclick="logout()">Logout</button>
 </div>
@@ -132,7 +158,7 @@ th, td {
 
 <script>
 
-// SAVE DATA
+// SAVE USER DATA
 function saveData(){
  let data = JSON.parse(localStorage.getItem("trial")) || [];
 
@@ -145,7 +171,7 @@ function saveData(){
  data.push(user);
  localStorage.setItem("trial", JSON.stringify(data));
 
- alert("Trial Booked!");
+ alert("Trial Booked Successfully!");
 }
 
 // USER LOGIN
@@ -156,35 +182,47 @@ function userLogin(){
  let user = data.find(d => d.phone === phone);
 
  if(user){
-  document.getElementById("userLogin").classList.add("hidden");
+  hideAll();
   document.getElementById("userProfile").classList.remove("hidden");
 
   document.getElementById("profileData").innerHTML =
    "Name: " + user.name + "<br>Phone: " + user.phone + "<br>Product: " + user.product;
  } else {
-  alert("No Data Found!");
+  alert("No record found!");
  }
 }
 
-// ADMIN LOGIN (default)
-localStorage.setItem("adminUser","admin");
-localStorage.setItem("adminPass","1234");
+// ADMIN REGISTER
+function registerAdmin(){
+ let user = document.getElementById("ruser").value;
+ let pass = document.getElementById("rpass").value;
 
+ localStorage.setItem("adminUser", user);
+ localStorage.setItem("adminPass", pass);
+
+ alert("Admin Registered!");
+ showAdminLogin();
+}
+
+// ADMIN LOGIN
 function adminLogin(){
- let u = document.getElementById("adminUser").value;
- let p = document.getElementById("adminPass").value;
+ let user = document.getElementById("luser").value;
+ let pass = document.getElementById("lpass").value;
 
- if(u==="admin" && p==="1234"){
-  showAdmin();
+ let u = localStorage.getItem("adminUser");
+ let p = localStorage.getItem("adminPass");
+
+ if(user === u && pass === p){
+  showAdminPanel();
  } else {
-  alert("Wrong Login");
+  alert("Invalid Login!");
  }
 }
 
-// LOAD DATA
-function showAdmin(){
+// ADMIN DATA LOAD
+function showAdminPanel(){
  hideAll();
- document.getElementById("admin").classList.remove("hidden");
+ document.getElementById("adminPanel").classList.remove("hidden");
 
  let data = JSON.parse(localStorage.getItem("trial")) || [];
  let html="";
@@ -201,27 +239,18 @@ function showAdmin(){
 }
 
 // NAVIGATION
-function showUserLogin(){
- hideAll();
- document.getElementById("userLogin").classList.remove("hidden");
-}
-
-function showAdminLogin(){
- hideAll();
- document.getElementById("adminLogin").classList.remove("hidden");
-}
-
-function logout(){
- hideAll();
- document.getElementById("home").classList.remove("hidden");
-}
+function showUserLogin(){ hideAll(); document.getElementById("userLogin").classList.remove("hidden"); }
+function showAdminRegister(){ hideAll(); document.getElementById("adminRegister").classList.remove("hidden"); }
+function showAdminLogin(){ hideAll(); document.getElementById("adminLogin").classList.remove("hidden"); }
+function logout(){ hideAll(); document.getElementById("home").classList.remove("hidden"); }
 
 function hideAll(){
  document.getElementById("home").classList.add("hidden");
  document.getElementById("userLogin").classList.add("hidden");
  document.getElementById("userProfile").classList.add("hidden");
+ document.getElementById("adminRegister").classList.add("hidden");
  document.getElementById("adminLogin").classList.add("hidden");
- document.getElementById("admin").classList.add("hidden");
+ document.getElementById("adminPanel").classList.add("hidden");
 }
 
 </script>
